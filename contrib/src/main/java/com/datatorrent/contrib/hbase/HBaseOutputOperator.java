@@ -1,18 +1,18 @@
 /*
- * Copyright (c) 2013 DataTorrent, Inc. ALL Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright (c) 2013 DataTorrent, Inc. ALL Rights Reserved.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package com.datatorrent.contrib.hbase;
 
 import com.datatorrent.api.annotation.InputPortFieldAnnotation;
@@ -29,21 +29,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The base class for HBase output operators. <br>
- *
- * <br>
- * The output operator collects all the tuples that arrive in a window and writes them to
- * HBase in endWindow. The tuples are stored in an application specific manner. The concrete
- * implementation that extends this operator provides a method that specifies where to store the
- * tuple. The operator also stores the last processed window id into the table and loads it during setup time.
- * If the processing window id is not greater than the last processed window id that was loaded those tuples
- * are ignored till the processing window id becomes greater than the last processed window id.<br>
- *
- * <br>
- *
- * @param <T> The tuple type
- * @since 0.3.2
- */
+* The base class for HBase output operators. <br>
+*
+* <br>
+* The output operator collects all the tuples that arrive in a window and writes them to
+* HBase in endWindow. The tuples are stored in an application specific manner. The concrete
+* implementation that extends this operator provides a method that specifies where to store the
+* tuple. The operator also stores the last processed window id into the table and loads it during setup time.
+* If the processing window id is not greater than the last processed window id that was loaded those tuples
+* are ignored till the processing window id becomes greater than the last processed window id.<br>
+*
+* <br>
+*
+* @param <T> The tuple type
+* @since 0.3.2
+*/
 public abstract class HBaseOutputOperator<T> extends HBaseOperatorBase implements Operator {
 
   private static final transient Logger logger = LoggerFactory.getLogger(HBaseOutputOperator.class);
@@ -83,17 +83,17 @@ public abstract class HBaseOutputOperator<T> extends HBaseOperatorBase implement
   }
 
   /**
-   * Get the name of the column where the last processed window id is stored.
-   * @return The column name
-   */
+* Get the name of the column where the last processed window id is stored.
+* @return The column name
+*/
   public String getLastWindowColumnName()
   {
     return lastWindowColumnName;
   }
 
    /**
-   * Set the name of the column where the last processed window id is stored.
-   */
+* Set the name of the column where the last processed window id is stored.
+*/
   public void setLastWindowColumnName(String lastWindowColumnName)
   {
     this.lastWindowColumnName = lastWindowColumnName;
@@ -144,9 +144,9 @@ public abstract class HBaseOutputOperator<T> extends HBaseOperatorBase implement
   }
 
   /**
-   * Process the tuples that arrived in the window.
-   * @throws IOException
-   */
+* Process the tuples that arrived in the window.
+* @throws IOException
+*/
   private void processTuples() throws IOException {
     Iterator<T> it = tuples.iterator();
     while (it.hasNext()) {
@@ -164,10 +164,10 @@ public abstract class HBaseOutputOperator<T> extends HBaseOperatorBase implement
   }
 
   /**
-   * Retrieve the processing state that was saved in a prior run.
-   * The state is loaded from the HBase table in an application specific way.
-   * @throws IOException
-   */
+* Retrieve the processing state that was saved in a prior run.
+* The state is loaded from the HBase table in an application specific way.
+* @throws IOException
+*/
   private void loadProcessState() throws IOException {
     byte[] lastProcessedWindowBytes = persistenceStrategy.getState(lastWindowColumnBytes);
     if (lastProcessedWindowBytes != null) {
@@ -176,28 +176,28 @@ public abstract class HBaseOutputOperator<T> extends HBaseOperatorBase implement
   }
 
   /**
-   * Save the current processing state.
-   * The state is saved to the HBase table in an application specific way.
-   * @throws IOException
-   */
+* Save the current processing state.
+* The state is saved to the HBase table in an application specific way.
+* @throws IOException
+*/
   private void saveProcessState() throws IOException {
     byte[] lastProcessedWindowBytes = Bytes.toBytes(lastProcessedWindow);
     persistenceStrategy.saveState(lastWindowColumnBytes, lastProcessedWindowBytes);
   }
 
   /**
-   * Get the persistence strategy.
-   * Get the persistence strategy to use to save and retrieve state. The concrete class that
-   * extends this calls should implement this method to specify how to save and load state.
-   * @return The persistence strategy
-   */
+* Get the persistence strategy.
+* Get the persistence strategy to use to save and retrieve state. The concrete class that
+* extends this calls should implement this method to specify how to save and load state.
+* @return The persistence strategy
+*/
   public abstract HBaseStatePersistenceStrategy getPersistenceStrategy();
 
   /**
-   * Process a tuple.
-   * @param t The tuple
-   * @throws IOException
-   */
+* Process a tuple.
+* @param t The tuple
+* @throws IOException
+*/
   public abstract void processTuple(T t) throws IOException;
 
 }
