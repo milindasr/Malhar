@@ -258,20 +258,20 @@ public class Application implements StreamingApplication
     oper.setCountkey(true);
     return oper;
   }
-
+//done 
   public EventGenerator getPageViewGenOperator(String name, DAG b)
   {
     EventGenerator oper = b.addOperator(name, EventGenerator.class);
-    oper.setKeys("home,finance,sports,mail");
+   // oper.setKeys("home,finance,sports,mail");
     // Paying $2.15,$3,$1.75,$.6 for 1000 views respectively
-    oper.setValues("0.00215,0.003,0.00175,0.0006");
-    oper.setWeights("25,25,25,25");
+  //  oper.setValues("0.00215,0.003,0.00175,0.0006");
+   // oper.setWeights("25,25,25,25");
     oper.setTuplesBlast(this.generatorVTuplesBlast);
     oper.setMaxCountOfWindows(generatorMaxWindowsCount);
     oper.setRollingWindowCount(this.generatorWindowCount);
     return oper;
   }
-
+//needs to stay
   public EventClassifier getAdViewsStampOperator(String name, DAG b)
   {
     EventClassifier oper = b.addOperator(name, EventClassifier.class);
@@ -315,14 +315,16 @@ public class Application implements StreamingApplication
     alist.add(35);
     wmap.put("mail", alist);
     oper.setKeyWeights(wmap);
-    oper.setPassFilter(40);
-    oper.setTotalFilter(1000);
+    
+  //  oper.setPassFilter(40);
+  //  oper.setTotalFilter(1000);
     return oper;
   }
 
   @Override
   public void populateDAG(DAG dag, Configuration conf)
   {
+	
     configure(dag, conf);
     dag.setAttribute(DAG.APPLICATION_NAME, "AdsApplication");
     dag.setAttribute(DAG.STREAMING_WINDOW_SIZE_MILLIS, WINDOW_SIZE_MILLIS); // set the streaming window size to 1 millisec
@@ -330,26 +332,27 @@ public class Application implements StreamingApplication
     //dag.getAttributes().attr(DAG.CONTAINERS_MAX_COUNT).setIfAbsent(9);
     EventGenerator viewGen = getPageViewGenOperator("viewGen", dag);
     dag.getMeta(viewGen).getAttributes().put(OperatorContext.INITIAL_PARTITION_COUNT, numGenerators);
-    dag.setOutputPortAttribute(viewGen.hash_data, PortContext.QUEUE_CAPACITY, 32 * 1024);
-
+   // dag.setOutputPortAttribute(viewGen.hash_data, PortContext.QUEUE_CAPACITY, 32 * 1024);
+   
     EventClassifier adviews = getAdViewsStampOperator("adviews", dag);
-    dag.setOutputPortAttribute(adviews.data, PortContext.QUEUE_CAPACITY, 32 * 1024);
-    dag.setInputPortAttribute(adviews.event, PortContext.QUEUE_CAPACITY, 32 * 1024);
+    //dag.setOutputPortAttribute(adviews.data, PortContext.QUEUE_CAPACITY, 32 * 1024);
+    //dag.setInputPortAttribute(adviews.event, PortContext.QUEUE_CAPACITY, 32 * 1024);
 
     FilteredEventClassifier<Double> insertclicks = getInsertClicksOperator("insertclicks", dag);
-    dag.setInputPortAttribute(insertclicks.data, PortContext.QUEUE_CAPACITY, 32 * 1024);
+    //dag.setInputPortAttribute(insertclicks.data, PortContext.QUEUE_CAPACITY, 32 * 1024);
 
     SumCountMap<String, Double> viewAggregate = getSumOperator("viewAggr", dag);
     dag.setAttribute(viewAggregate, OperatorContext.APPLICATION_WINDOW_COUNT, applicationWindow);
-    dag.setInputPortAttribute(viewAggregate.data, PortContext.QUEUE_CAPACITY, 32 * 1024);
+    //dag.setInputPortAttribute(viewAggregate.data, PortContext.QUEUE_CAPACITY, 32 * 1024);
 
     SumCountMap<String, Double> clickAggregate = getSumOperator("clickAggr", dag);
     dag.setAttribute(clickAggregate, OperatorContext.APPLICATION_WINDOW_COUNT, applicationWindow);
 
-    dag.setInputPortAttribute(adviews.event, PortContext.PARTITION_PARALLEL, true);
-    dag.addStream("views", viewGen.hash_data, adviews.event).setLocality(Locality.CONTAINER_LOCAL);
-    dag.setInputPortAttribute(insertclicks.data, PortContext.PARTITION_PARALLEL, true);
-    dag.setInputPortAttribute(viewAggregate.data, PortContext.PARTITION_PARALLEL, true);
+    //dag.setInputPortAttribute(adviews.event, PortContext.PARTITION_PARALLEL, true);
+   // dag.addStream("views", viewGen.hash_data, adviews.event).setLocality(Locality.CONTAINER_LOCAL);
+    dag.addStream("views", viewGen.hash_data, adviews.event);
+    //dag.setInputPortAttribute(insertclicks.data, PortContext.PARTITION_PARALLEL, true);
+    //dag.setInputPortAttribute(viewAggregate.data, PortContext.PARTITION_PARALLEL, true);
     DAG.StreamMeta viewsAggStream = dag.addStream("viewsaggregate", adviews.data, insertclicks.data, viewAggregate.data).setLocality(Locality.CONTAINER_LOCAL);
 
     if (conf.getBoolean(P_enableHdfs, false)) {
@@ -361,9 +364,9 @@ public class Application implements StreamingApplication
       viewsAggStream.addSink(viewsToHdfs.input);
     }
 
-    dag.setInputPortAttribute(clickAggregate.data, PortContext.PARTITION_PARALLEL, true);
-    dag.addStream("clicksaggregate", insertclicks.filter, clickAggregate.data).setLocality(Locality.CONTAINER_LOCAL);
-
+    //dag.setInputPortAttribute(clickAggregate.data, PortContext.PARTITION_PARALLEL, true);
+   //dag.addStream("clicksaggregate", insertclicks.filter, clickAggregate.data).setLocality(Locality.CONTAINER_LOCAL);
+    dag.addStream("clicksaggregate", insertclicks.filter, clickAggregate.data);
 
     QuotientMap<String, Integer> ctr = getQuotientOperator("ctr", dag);
     SumCountMap<String, Double> cost = getSumOperator("cost", dag);

@@ -36,7 +36,10 @@ public class ApplicationTest {
     Application app = new Application();
     app.setUnitTestMode(); // terminate quickly
     //app.setLocalMode(); // terminate with a long run
-    app.populateDAG(lma.getDAG(), new Configuration(false));
+    Configuration conf =new Configuration(false);
+    conf.addResource("dt-site-ads.xml");
+    lma.prepareDAG(app, conf);
+   // app.populateDAG(lma.getDAG(),conf);
     try {
       LocalMode.Controller lc = lma.getController();
       lc.setHeartbeatMonitoringEnabled(false);
