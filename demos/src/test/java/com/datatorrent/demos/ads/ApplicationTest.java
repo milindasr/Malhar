@@ -34,10 +34,10 @@ public class ApplicationTest {
     LocalMode lma = LocalMode.newInstance();
 
     Application app = new Application();
-    app.setUnitTestMode(); // terminate quickly
-    //app.setLocalMode(); // terminate with a long run
+   // app.setUnitTestMode(); // terminate quickly
+   // app.setLocalMode(); // terminate with a long run
     Configuration conf =new Configuration(false);
-    conf.addResource("dt-site-ads.xml");
+    conf.addResource("dt-site-adslocal.xml");
     lma.prepareDAG(app, conf);
    // app.populateDAG(lma.getDAG(),conf);
     try {

@@ -55,7 +55,8 @@ public class Application implements StreamingApplication
   public MerchantTransactionGenerator getMerchantTransactionGenerator(String name, DAG dag)
   {
     MerchantTransactionGenerator oper = dag.addOperator(name, MerchantTransactionGenerator.class);
-    // dag.setAttribute(oper, OperatorContext.APPLICATION_WINDOW_COUNT, appWindowCount);
+    //TODO
+    dag.setAttribute(oper, OperatorContext.APPLICATION_WINDOW_COUNT, appWindowCount);
     return oper;
   }
 
@@ -71,7 +72,6 @@ public class Application implements StreamingApplication
   {
     PubSubWebSocketOutputOperator out = dag.addOperator(name, new PubSubWebSocketOutputOperator());
     out.setUri(duri);
-    out.setTopic(topic);
     return out;
   }
 
@@ -85,8 +85,6 @@ public class Application implements StreamingApplication
   {
     BankIdNumberSamplerOperator oper = dag.addOperator(name, BankIdNumberSamplerOperator.class);
     oper.setThreshold(conf.getInt(BIN_THRESHOLD_PROPERTY, 20));
-    // dag.setAttribute(oper, OperatorContext.APPLICATION_WINDOW_COUNT, binSamplerWindowCount);
-    dag.setAttribute(oper, OperatorContext.APPLICATION_WINDOW_COUNT, 10);
     return oper;
   }
 
@@ -99,24 +97,18 @@ public class Application implements StreamingApplication
   public RangeKeyVal<MerchantKey, Long> getRangeKeyValOperator(String name, DAG dag)
   {
     RangeKeyVal oper = dag.addOperator(name, new RangeKeyVal<MerchantKey, Long>());
-    dag.setAttribute(oper, OperatorContext.APPLICATION_WINDOW_COUNT, appWindowCount);
     return oper;
   }
 
   public SimpleMovingAverage<MerchantKey, Long> getSimpleMovingAverageOpertor(String name, DAG dag)
   {
     SimpleMovingAverage<MerchantKey, Long> oper = dag.addOperator(name, SimpleMovingAverage.class);
-    oper.setWindowSize(30);
-    dag.setAttribute(oper, OperatorContext.APPLICATION_WINDOW_COUNT, appWindowCount);
     return oper;
   }
 
   public SlidingWindowSumKeyVal<KeyValPair<MerchantKey, String>, Integer> getSlidingWindowSumOperator(String name, DAG dag)
   {
     SlidingWindowSumKeyVal<KeyValPair<MerchantKey, String>, Integer> oper = dag.addOperator(name, SlidingWindowSumKeyVal.class);
-    oper.setWindowSize(3);
-    // dag.setAttribute(oper, OperatorContext.APPLICATION_WINDOW_COUNT, appWindowCount);
-    dag.setAttribute(oper, OperatorContext.APPLICATION_WINDOW_COUNT, 10);
     return oper;
   }
 
@@ -124,7 +116,6 @@ public class Application implements StreamingApplication
   {
     AverageAlertingOperator oper = dag.addOperator(name, AverageAlertingOperator.class);
     oper.setThreshold(conf.getInt(AVG_THRESHOLD_PROPERTY, 1200));
-    dag.setAttribute(oper, OperatorContext.APPLICATION_WINDOW_COUNT, appWindowCount);
     return oper;
   }
 
@@ -132,14 +123,12 @@ public class Application implements StreamingApplication
   {
     CreditCardAmountSamplerOperator oper = dag.addOperator(name, CreditCardAmountSamplerOperator.class);
     oper.setThreshold(conf.getInt(CC_THRESHOLD_PROPERTY, 420));
-    dag.setAttribute(oper, OperatorContext.APPLICATION_WINDOW_COUNT, amountSamplerWindowCount);
     return oper;
   }
 
   public TransactionStatsAggregator getTransactionStatsAggregator(String name, DAG dag)
   {
     TransactionStatsAggregator oper = dag.addOperator(name, TransactionStatsAggregator.class);
-    dag.setAttribute(oper, OperatorContext.APPLICATION_WINDOW_COUNT, appWindowCount);
     return oper;
   }
 
@@ -189,7 +178,7 @@ public class Application implements StreamingApplication
 
       dag.setAttribute(DAG.APPLICATION_NAME, "FraudDetectionApplication");
       dag.setAttribute(DAG.DEBUG, false);
-      dag.setAttribute(DAG.STREAMING_WINDOW_SIZE_MILLIS, 1000);
+    //  dag.setAttribute(DAG.STREAMING_WINDOW_SIZE_MILLIS, 1000);
 
       PubSubWebSocketInputOperator userTxWsInput = getPubSubWebSocketInputOperator("userTxInput", dag, duri, "demos.app.frauddetect.submitTransaction");
       PubSubWebSocketOutputOperator ccUserAlertWsOutput = getPubSubWebSocketOutputOperator("ccUserAlertQueryOutput", dag, duri, "demos.app.frauddetect.fraudAlert");
@@ -198,56 +187,15 @@ public class Application implements StreamingApplication
       PubSubWebSocketOutputOperator txSummaryWsOutput = getPubSubWebSocketOutputOperator("txSummaryWsOutput", dag, duri, "demos.app.frauddetect.txSummary");
 
       SlidingWindowSumKeyVal<KeyValPair<MerchantKey, String>, Integer> smsOperator = getSlidingWindowSumOperator("movingSum", dag);
-      dag.setInputPortAttribute(smsOperator.data, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
-      dag.setOutputPortAttribute(smsOperator.integerSum, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
-
       MerchantTransactionGenerator txReceiver = getMerchantTransactionGenerator("txReceiver", dag);
       MerchantTransactionInputHandler txInputHandler = getMerchantTransactionInputHandler("txInputHandler", dag);
       BankIdNumberSamplerOperator binSampler = getBankIdNumberSamplerOperator("bankInfoFraudDetector", dag, conf);
-      // dag.setAttribute(binSampler, OperatorContext.INITIAL_PARTITION_COUNT, 1);
-      // dag.setAttribute(binSampler, OperatorContext.PARTITION_TPS_MIN, 3000);
-      // dag.setAttribute(binSampler, OperatorContext.PARTITION_TPS_MAX, 6000);
-      // dag.setInputPortAttribute(binSampler.txInputPort, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
-      dag.setInputPortAttribute(binSampler.txCountInputPort, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
-
       MerchantTransactionBucketOperator txBucketOperator = getMerchantTransactionBucketOperator("txFilter", dag);
-      dag.setOutputPortAttribute(txBucketOperator.binCountOutputPort, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
-      dag.setOutputPortAttribute(txBucketOperator.txOutputPort, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
-      dag.setOutputPortAttribute(txBucketOperator.ccAlertOutputPort, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
-      dag.setOutputPortAttribute(txBucketOperator.summaryTxnOutputPort, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
-
       RangeKeyVal<MerchantKey, Long> rangeOperator = getRangeKeyValOperator("rangePerMerchant", dag);
-      // dag.setAttribute(rangeOperator, OperatorContext.INITIAL_PARTITION_COUNT, 1);
-      // dag.setAttribute(rangeOperator, OperatorContext.PARTITION_TPS_MIN, 5000);
-      // dag.setAttribute(rangeOperator, OperatorContext.PARTITION_TPS_MAX, 8000);
-      dag.setInputPortAttribute(rangeOperator.data, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
-      // StandardDeviationKeyValFilter<MerchantKey, Long> stdDevOperator =
-      // getStandardDeviationKeyValFilterOperator("stdDev", dag);
       SimpleMovingAverage<MerchantKey, Long> smaOperator = getSimpleMovingAverageOpertor("smaPerMerchant", dag);
-      // dag.setAttribute(smaOperator, OperatorContext.INITIAL_PARTITION_COUNT, 1);
-      // dag.setAttribute(smaOperator, OperatorContext.PARTITION_TPS_MIN, 3000);
-      // dag.setAttribute(smaOperator, OperatorContext.PARTITION_TPS_MAX, 6000);
-      dag.setInputPortAttribute(smaOperator.data, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
-
       TransactionStatsAggregator txStatsAggregator = getTransactionStatsAggregator("txStatsAggregator", dag);
-      // dag.setInputPortAttribute(txStatsAggregator.minInputPort, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
-      // dag.setInputPortAttribute(txStatsAggregator.maxInputPort, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
-      dag.setInputPortAttribute(txStatsAggregator.rangeInputPort, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
-      dag.setInputPortAttribute(txStatsAggregator.smaInputPort, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
-
       AverageAlertingOperator avgAlertingOperator = getAverageAlertingOperator("avgAlerter", dag, conf);
-      // dag.setAttribute(avgAlertingOperator, OperatorContext.INITIAL_PARTITION_COUNT, 1);
-      // dag.setAttribute(avgAlertingOperator, OperatorContext.PARTITION_TPS_MIN, 3000);
-      // dag.setAttribute(avgAlertingOperator, OperatorContext.PARTITION_TPS_MAX, 6000);
-      dag.setInputPortAttribute(avgAlertingOperator.smaInputPort, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
-      // dag.setInputPortAttribute(avgAlertingOperator.txInputPort, Context.PortContext.PARTITION_PARALLEL, true);
-      dag.setInputPortAttribute(avgAlertingOperator.txInputPort, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
       CreditCardAmountSamplerOperator ccSamplerOperator = getTransactionAmountSamplerOperator("amountFraudDetector", dag, conf);
-      dag.setInputPortAttribute(ccSamplerOperator.inputPort, Context.PortContext.QUEUE_CAPACITY, 32 * 1024);
-      // dag.setAttribute(ccSamplerOperator, OperatorContext.INITIAL_PARTITION_COUNT, 1);
-      // dag.setAttribute(ccSamplerOperator, OperatorContext.PARTITION_TPS_MIN, 3000);
-      // dag.setAttribute(ccSamplerOperator, OperatorContext.PARTITION_TPS_MAX, 6000);
-
       HdfsStringOutputOperator hdfsOutputOperator = getHdfsOutputOperator("hdfsOutput", dag, "fraud");
 
       MongoDBOutputOperator mongoTxStatsOperator = getMongoDBOutputOperator("mongoTxStatsOutput", dag, "txStats", conf);

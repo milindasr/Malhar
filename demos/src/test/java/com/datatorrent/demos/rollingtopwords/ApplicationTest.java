@@ -17,6 +17,7 @@ package com.datatorrent.demos.rollingtopwords;
 
 import com.datatorrent.api.LocalMode;
 import com.datatorrent.contrib.twitter.TwitterSampleInput;
+
 import org.apache.hadoop.conf.Configuration;
 import org.junit.Test;
 
@@ -34,8 +35,11 @@ public class ApplicationTest
   @Test
   public void testApplication() throws Exception
   {
+	Application app = new Application();
+	Configuration conf =new Configuration(false);
+	conf.addResource("dt-site-toprollingwords.xml");
     LocalMode lma = LocalMode.newInstance();
-    new Application().populateDAG(lma.getDAG(), new Configuration(false));
+    lma.prepareDAG(app, conf);
     LocalMode.Controller lc = lma.getController();
     lc.run(120000);
   }

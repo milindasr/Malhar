@@ -151,18 +151,8 @@ public class Application implements StreamingApplication
     RandomEventGenerator phones = dag.addOperator("phonegen", RandomEventGenerator.class);
     phones.setMinvalue(this.phoneRange.lowerEndpoint());
     phones.setMaxvalue(this.phoneRange.upperEndpoint());
-    phones.setTuplesBlast(200);
-    phones.setTuplesBlastIntervalMillis(5);
-    dag.setOutputPortAttribute(phones.integer_data, PortContext.QUEUE_CAPACITY, 32 * 1024);
-
     PhoneMovementGenerator movementGen = dag.addOperator("pmove", PhoneMovementGenerator.class);
-    movementGen.setRange(20);
-    movementGen.setThreshold(80);
-    dag.setAttribute(movementGen, OperatorContext.INITIAL_PARTITION_COUNT, 2);
-    dag.setAttribute(movementGen, OperatorContext.PARTITION_TPS_MIN, 10000);
-    dag.setAttribute(movementGen, OperatorContext.PARTITION_TPS_MAX, 30000);
-    dag.setInputPortAttribute(movementGen.data, PortContext.QUEUE_CAPACITY, 32 * 1024);
-
+   
     // default partitioning: first connected stream to movementGen will be partitioned
     dag.addStream("phonedata", phones.integer_data, movementGen.data);
 
