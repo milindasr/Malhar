@@ -1,0 +1,19 @@
+<configuration>
+ <property>
+	<name>dt.application.pi.class</name>
+	<value>com.datatorrent.demos.pi.Application</value>
+	<description>An alias for the application</description>
+</property> 
+<property>
+	<name>dt.application.pi.operator.rand.minvalue</name>
+	<value>0</value>
+</property>
+<property>
+	<name>dt.application.pi.operator.rand.maxvalue</name>
+	<value>30000</value>
+</property>
+<property>
+	<name>dt.application.pi.operator.picalc.base</name>
+	<value>900000000</value>
+</property>
+</configuration>

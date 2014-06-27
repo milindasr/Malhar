@@ -1,0 +1,48 @@
+<configuration>
+ <property>
+	<name>dt.application.mobile.class</name>
+	<value>com.datatorrent.demos.mobile.Application</value>
+	<description>An alias for the application</description>
+</property>
+ <property>
+	<name>dt.application.mobile.operator.phonegen.tuplesBlast</name>
+	<value>200</value>
+</property>
+ <property>
+	<name>dt.application.mobile.operator.phonegen.tuplesBlastIntervalMillis</name>
+	<value>5</value>
+</property>
+<property>
+	<name>dt.application.mobile.operator.phonegen.outputport.integer_data.attr.QUEUE_CAPACITY
+	</name>
+	<value>32768</value>
+</property>
+ <property>
+	<name>dt.application.mobile.operator.pmove.range</name>
+	<value>20</value>
+</property>
+ <property>
+	<name>dt.application.mobile.operator.pmove.threshold</name>
+	<value>80</value>
+</property>
+ <property>
+	<name>dt.application.mobile.operator.pmove.attr.INITIAL_PARTITION_COUNT
+	</name>
+	<value>2</value> 
+</property>
+<property>
+	<name>dt.application.mobile.operator.pmove.attr.PARTITION_TPS_MIN
+	</name>
+	<value>10000</value> 
+</property>
+<property>
+	<name>dt.application.mobile.operator.pmove.attr.PARTITION_TPS_MAX
+	</name>
+	<value>30000</value> 
+</property>
+<property>
+	<name>dt.application.mobile.operator.pmove.inputport.data.attr.QUEUE_CAPACITY
+	</name>
+	<value>32768</value>
+</property>
+</configuration>
