@@ -21,7 +21,9 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.datatorrent.api.Stats;
+import org.apache.commons.lang.mutable.MutableLong;
+
+import com.datatorrent.lib.counters.BasicCounters;
 
 /**
  * <p>
@@ -124,7 +126,6 @@ public interface BucketManager<T extends Bucketable>
    * persisting all un-written events in the store.
    *
    * @param window window number.
-   * @throws Exception
    */
   void endWindow(long window);
 
@@ -142,7 +143,7 @@ public interface BucketManager<T extends Bucketable>
    */
   BucketManager<T> cloneWithProperties();
 
-  void setBucketCounters(@Nonnull BucketCounters stats);
+  void setBucketCounters(@Nonnull BasicCounters<MutableLong> stats);
 
   /**
    * Collects the un-written events of all the old managers and distributes the data to the new managers.<br/>
@@ -158,6 +159,8 @@ public interface BucketManager<T extends Bucketable>
 
   /**
    * Callback interface for {@link BucketManager} for load and off-load operations.
+   *
+   * @param <T> Type of the values which can be bucketed.
    */
   public static interface Listener<T extends Bucketable>
   {
@@ -178,57 +181,10 @@ public interface BucketManager<T extends Bucketable>
 
   }
 
-  public static class BucketCounters implements Stats.OperatorStats.CustomStats
+  public static enum CounterKeys
   {
-    protected int numBucketsInMemory;
-    protected int numEvictedBuckets;
-    protected int numDeletedBuckets;
 
-    protected long numEventsCommittedPerWindow;
-    protected long numEventsInMemory;
-    protected long numIgnoredEvents;
-
-    protected long low;
-    protected long high;
-
-    public int getNumBucketsInMemory()
-    {
-      return numBucketsInMemory;
-    }
-
-    public int getNumEvictedBuckets()
-    {
-      return numEvictedBuckets;
-    }
-
-    public int getNumDeletedBuckets()
-    {
-      return numDeletedBuckets;
-    }
-
-    public long getNumEventsCommittedPerWindow()
-    {
-      return numEventsCommittedPerWindow;
-    }
-
-    public long getNumEventsInMemory()
-    {
-      return numEventsInMemory;
-    }
-
-    public long getNumIgnoredEvents()
-    {
-      return numIgnoredEvents;
-    }
-
-    public long getLow()
-    {
-      return low;
-    }
-
-    public long getHigh()
-    {
-      return high;
-    }
+    BUCKETS_IN_MEMORY, EVICTED_BUCKETS, DELETED_BUCKETS, EVENTS_COMMITTED_LAST_WINDOW,
+    EVENTS_IN_MEMORY
   }
 }
