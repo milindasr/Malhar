@@ -15,21 +15,25 @@
  */
 package com.datatorrent.demos.frauddetect;
 
-import com.datatorrent.api.*;
-import com.datatorrent.api.Context.OperatorContext;
+import java.net.URI;
+
+import org.apache.hadoop.conf.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.datatorrent.api.AttributeMap;
+import com.datatorrent.api.DAG;
+import com.datatorrent.api.DAGContext;
+import com.datatorrent.api.StreamingApplication;
 import com.datatorrent.api.annotation.ApplicationAnnotation;
+import com.datatorrent.demos.frauddetect.operator.HdfsStringOutputOperator;
+import com.datatorrent.demos.frauddetect.operator.MongoDBOutputOperator;
 import com.datatorrent.lib.io.ConsoleOutputOperator;
 import com.datatorrent.lib.io.PubSubWebSocketInputOperator;
 import com.datatorrent.lib.io.PubSubWebSocketOutputOperator;
 import com.datatorrent.lib.math.RangeKeyVal;
 import com.datatorrent.lib.multiwindow.SimpleMovingAverage;
 import com.datatorrent.lib.util.KeyValPair;
-import com.datatorrent.demos.frauddetect.operator.HdfsStringOutputOperator;
-import com.datatorrent.demos.frauddetect.operator.MongoDBOutputOperator;
-import org.apache.hadoop.conf.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.net.URI;
 
 /**
  * Fraud detection application
@@ -44,9 +48,6 @@ public class Application implements StreamingApplication
   protected int aggrWindowCount = 1; // 1 seconds
   protected int amountSamplerWindowCount = 1; // 30 seconds
   protected int binSamplerWindowCount = 1; // 30 seconds
-  public static final String BIN_THRESHOLD_PROPERTY = "demo.frauddetect.bin.threshold";
-  public static final String AVG_THRESHOLD_PROPERTY = "demo.frauddetect.avg.threshold";
-  public static final String CC_THRESHOLD_PROPERTY = "demo.frauddetect.cc.threshold";
   public static final String MONGO_HOST_PROPERTY = "demo.frauddetect.mongo.host";
   public static final String MONGO_DATABASE_PROPERTY = "demo.frauddetect.mongo.db";
   public static final String MONGO_USER_PROPERTY = "demo.frauddetect.mongo.user";
@@ -55,8 +56,6 @@ public class Application implements StreamingApplication
   public MerchantTransactionGenerator getMerchantTransactionGenerator(String name, DAG dag)
   {
     MerchantTransactionGenerator oper = dag.addOperator(name, MerchantTransactionGenerator.class);
-    //TODO
-    dag.setAttribute(oper, OperatorContext.APPLICATION_WINDOW_COUNT, appWindowCount);
     return oper;
   }
 
@@ -84,7 +83,6 @@ public class Application implements StreamingApplication
   public BankIdNumberSamplerOperator getBankIdNumberSamplerOperator(String name, DAG dag, Configuration conf)
   {
     BankIdNumberSamplerOperator oper = dag.addOperator(name, BankIdNumberSamplerOperator.class);
-    oper.setThreshold(conf.getInt(BIN_THRESHOLD_PROPERTY, 20));
     return oper;
   }
 
@@ -115,14 +113,12 @@ public class Application implements StreamingApplication
   public AverageAlertingOperator getAverageAlertingOperator(String name, DAG dag, Configuration conf)
   {
     AverageAlertingOperator oper = dag.addOperator(name, AverageAlertingOperator.class);
-    oper.setThreshold(conf.getInt(AVG_THRESHOLD_PROPERTY, 1200));
     return oper;
   }
 
   public CreditCardAmountSamplerOperator getTransactionAmountSamplerOperator(String name, DAG dag, Configuration conf)
   {
     CreditCardAmountSamplerOperator oper = dag.addOperator(name, CreditCardAmountSamplerOperator.class);
-    oper.setThreshold(conf.getInt(CC_THRESHOLD_PROPERTY, 420));
     return oper;
   }
 
@@ -135,10 +131,6 @@ public class Application implements StreamingApplication
   public MongoDBOutputOperator getMongoDBOutputOperator(String name, DAG dag, String collection, Configuration conf)
   {
     MongoDBOutputOperator oper = dag.addOperator(name, MongoDBOutputOperator.class);
-
-    oper.setHostName(conf.get(MONGO_HOST_PROPERTY, "localhost"));
-    oper.setDataBase(conf.get(MONGO_DATABASE_PROPERTY, "frauddetect"));
-
     // oper.setUserName("fraudadmin");
     // oper.setPassWord("1234");
     oper.setCollection(collection);
@@ -230,7 +222,7 @@ public class Application implements StreamingApplication
 
       dag.addStream("ccAlerts", ccSamplerOperator.ccAlertOutputPort, mongoCcAlertsOperator.inputPort);
       dag.addStream("ccAlertsNotification", ccSamplerOperator.ccAlertNotificationPort, ccUserAlertWsOutput.input);
-
+      
     } catch (Exception exc) {
       exc.printStackTrace();
     }

@@ -30,6 +30,11 @@
 	<value>10</value>
 </property>
 <property>
+	<name>dt.application.frauddetect.operator.bankInfoFraudDetector.threshold
+	</name>
+	<value>20</value>
+</property>
+<property>
 	<name>dt.application.frauddetect.operator.rangePerMerchant.attr.APPLICATION_WINDOW_COUNT
 	</name>
 	<value>1</value>
@@ -65,10 +70,53 @@
 	<value>1</value>
 </property>
 <property>
+	<name>dt.application.frauddetect.operator.avgAlerter.threshold
+	</name>
+	<value>1200</value>
+</property>
+<property>
 	<name>dt.application.frauddetect.operator.amountFraudDetector.attr.APPLICATION_WINDOW_COUNT
 	</name>
 	<value>1</value>
 </property>
+<property>
+	<name>dt.application.frauddetect.operator.amountFraudDetector.threshold
+	</name>
+	<value>420</value>
+</property>
+<property>
+	<name>dt.application.frauddetect.operator.mongoTxStatsOutput.hostName</name>
+	<value>localhost</value>
+</property>
+<property>
+	<name>dt.application.frauddetect.operator.mongoTxStatsOutput.dataBase</name>
+	<value>frauddetect</value>
+</property>
+<property>
+	<name>dt.application.frauddetect.operator.mongoBinAlertsOutput.hostName</name>
+	<value>localhost</value>
+</property>
+<property>
+	<name>dt.application.frauddetect.operator.mongoBinAlertsOutput.dataBase</name>
+	<value>frauddetect</value>
+</property>
+<property>
+	<name>dt.application.frauddetect.operator.mongoCcAlertsOutput.hostName</name>
+	<value>localhost</value>
+</property>
+<property>
+	<name>dt.application.frauddetect.operator.mongoCcAlertsOutput.dataBase</name>
+	<value>frauddetect</value>
+</property>
+<property>
+	<name>dt.application.frauddetect.operator.mongoAvgAlertsOutput.hostName</name>
+	<value>localhost</value>
+</property>
+<property>
+	<name>dt.application.frauddetect.operator.mongoAvgAlertsOutput.dataBase</name>
+	<value>frauddetect</value>
+</property>
+
 <property>
 	<name>dt.application.frauddetect.operator.txStatsAggregator.attr.APPLICATION_WINDOW_COUNT
 	</name>
