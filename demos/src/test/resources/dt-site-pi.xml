@@ -16,4 +16,8 @@
 	<name>dt.application.pi.operator.picalc.base</name>
 	<value>900000000</value>
 </property>
+<property>
+	<name>dt.application.pi.attr.CONTAINER_MEMORY_MB</name>
+	<value>512</value>
+</property>
 </configuration>
