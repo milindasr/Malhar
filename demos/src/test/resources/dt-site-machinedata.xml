@@ -14,11 +14,6 @@
 	<value>5</value>
 </property>
 <property>
-	<name>dt.application.machinedata.operator.InputReceiver.outputport.outputInline.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
 	<name>dt.application.machinedata.operator.InputReceiver.attr.INITIAL_PARTITION_COUNT
 	</name>
 	<value>1</value> 
@@ -27,21 +22,6 @@
 	<name>dt.application.machinedata.operator.GenerateDimensions.attr.APPLICATION_WINDOW_COUNT
 	</name>
 	<value>5</value>
-</property>
-<property>
-	<name>dt.application.machinedata.operator.GenerateDimensions.outputport.outputInline.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.machinedata.operator.GenerateDimensions.outputport.output.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.machinedata.operator.GenerateDimensions.inputport.inputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
 </property>
   <property>
     <name>dt.application.machinedata.stream.generate_dimensions.locality</name>
@@ -63,39 +43,9 @@
 	<value>5</value>
 </property>
 <property>
-	<name>dt.application.machinedata.operator.PrereqAverage.outputport.outputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.machinedata.operator.PrereqAverage.inputport.inputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
 	<name>dt.application.machinedata.operator.Average.attr.APPLICATION_WINDOW_COUNT
 	</name>
 	<value>5</value>
-</property>
-<property>
-	<name>dt.application.machinedata.operator.Average.attr.INITIAL_PARTITION_COUNT
-	</name>
-	<value>2</value> 
-</property>
-<property>
-	<name>dt.application.machinedata.operator.Average.outputport.outputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.machinedata.operator.Average.inputport.inputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.machinedata.operator.RedisAverageOutput.inputport.input.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
 </property>
 <property>
 	<name>dt.application.machinedata.operator.RedisAverageOutput.inputport.input.attr.PARTITION_PARALLEL
@@ -108,38 +58,51 @@
 	<value>5</value>
 </property>
 <property>
-	<name>dt.application.machinedata.operator.Calculator.inputport.dataPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
+    <name>dt.application.machinedata.operator.RedisOutput.store.dbIndex</name>
+    <value>2</value>
+  </property>
+  <property>
+    <name>dt.application.machinedata.operator.RedisOutput.store.host</name>
+    <value>node9.morado.com</value>
+  </property>
+  <property>
+    <name>dt.application.machinedata.operator.RedisOutput.store.port</name>
+    <value>6379</value>
+  </property>
+  <property>
+     <name>dt.application.machinedata.port.*.attr.QUEUE_CAPACITY</name>
+     <value>32000</value>
+  </property>
+  <property>
+    <name>dt.application.machinedata.operator.SmtpAvgOperator.from</name>
+    <value>admin@datatorrent.com</value>
+  </property>
+   <property>
+    <name>dt.application.machinedata.operator.SmtpAvgOperator.subject</name>
+    <value>Alert!!!</value>
+  </property>
+  <property>
+    <name>dt.application.machinedata.operator.SmtpAvgOperator.content</name>
+    <value>{}</value>
+  </property>
+  <property>
+    <name>dt.application.machinedata.operator.SmtpAvgOperator.host</name>
+    <value>localhost</value>
+  </property>
+   <property>
+    <name>dt.application.machinedata.operator.SmtpAvgOperator.port</name>
+    <value>25</value>
+  </property>
+     <property>
+    <name>dt.application.machinedata.operator.SmtpAvgOperator.useSsl</name>
+    <value>false</value>
+  </property>
+  <property>
+	<name>dt.application.machinedata.operator.PrereqAverage.outputport.outputPort.attr.UNIFIER_LIMIT</name>
+	<value>8</value>
 </property>
-<property>
-	<name>dt.application.machinedata.operator.Calculator.outputport.percentileOutputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.machinedata.operator.console_percentile.inputport.input.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.machinedata.operator.Calculator.outputport.sdOutputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.machinedata.operator.console_sd.inputport.input.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.machinedata.operator.Calculator.outputport.maxOutputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.machinedata.operator.console_max.inputport.input.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
+ <property>
+    <name>dt.application.machinedata.stream.prereq_calculation.locality</name>
+    <value>THREAD_LOCAL</value>
+ </property>
 </configuration>
