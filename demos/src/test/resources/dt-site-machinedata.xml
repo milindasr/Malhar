@@ -58,15 +58,15 @@
 	<value>5</value>
 </property>
 <property>
-    <name>dt.application.machinedata.operator.RedisOutput.store.dbIndex</name>
+    <name>dt.application.machinedata.operator.RedisAverageOutput.store.dbIndex</name>
     <value>2</value>
   </property>
   <property>
-    <name>dt.application.machinedata.operator.RedisOutput.store.host</name>
+    <name>dt.application.machinedata.operator.RedisAverageOutput.store.host</name>
     <value>node9.morado.com</value>
   </property>
   <property>
-    <name>dt.application.machinedata.operator.RedisOutput.store.port</name>
+    <name>dt.application.machinedata.operator.RedisAverageOutput.store.port</name>
     <value>6379</value>
   </property>
   <property>
