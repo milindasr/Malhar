@@ -15,28 +15,26 @@
  */
 package com.datatorrent.demos.mobile;
 
-import com.datatorrent.api.AttributeMap;
-import com.datatorrent.api.Context.OperatorContext;
-import com.datatorrent.api.Context.PortContext;
-import com.datatorrent.api.DAG;
-import com.datatorrent.api.DAG.Locality;
-import com.datatorrent.api.annotation.ApplicationAnnotation;
-import com.datatorrent.api.DAGContext;
-import com.datatorrent.api.StreamingApplication;
-import com.datatorrent.lib.io.ConsoleOutputOperator;
-import com.datatorrent.lib.io.PubSubWebSocketInputOperator;
-import com.datatorrent.lib.io.PubSubWebSocketOutputOperator;
-import com.datatorrent.lib.testbench.RandomEventGenerator;
-import com.google.common.collect.Range;
-import com.google.common.collect.Ranges;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Random;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
-import java.util.Random;
+import com.datatorrent.api.Context.OperatorContext;
+import com.datatorrent.api.Context.PortContext;
+import com.datatorrent.api.DAG;
+import com.datatorrent.api.StatsListener;
+import com.datatorrent.api.StreamingApplication;
+import com.datatorrent.api.annotation.ApplicationAnnotation;
+import com.datatorrent.lib.io.PubSubWebSocketInputOperator;
+import com.datatorrent.lib.io.PubSubWebSocketOutputOperator;
+import com.datatorrent.lib.testbench.RandomEventGenerator;
+import com.google.common.collect.Range;
+import com.google.common.collect.Ranges;
 
 /**
  * Mobile Demo Application:
@@ -136,8 +134,13 @@ public class Application implements StreamingApplication
     phones.setMinvalue(this.phoneRange.lowerEndpoint());
     phones.setMaxvalue(this.phoneRange.upperEndpoint());
     PhoneMovementGenerator movementGen = dag.addOperator("pmove", PhoneMovementGenerator.class);
-   
-    // default partitioning: first connected stream to movementGen will be partitioned
+
+    ThroughputBasedPartitioner<PhoneMovementGenerator> partitioner = new ThroughputBasedPartitioner<PhoneMovementGenerator>();
+    partitioner.setCooldownMillis(90000);
+    partitioner.setMaximumThroughput(30000);
+    partitioner.setMinimumThroughput(10000);
+    dag.setAttribute(movementGen,OperatorContext.STATS_LISTENERS, Arrays.asList(new StatsListener[]{partitioner}));
+    dag.setAttribute(movementGen,OperatorContext.PARTITIONER, partitioner);
     dag.addStream("phonedata", phones.integer_data, movementGen.data);
 
     // generate seed numbers
@@ -168,7 +171,7 @@ public class Application implements StreamingApplication
       dag.addStream("consoledata", movementGen.locationQueryResult, wsOut.input);
       dag.addStream("query", wsIn.outputPort, movementGen.phoneQuery);
     }
-   
+
   }
 
 }
