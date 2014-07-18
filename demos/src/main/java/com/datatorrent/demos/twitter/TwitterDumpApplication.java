@@ -27,6 +27,7 @@ import twitter4j.Status;
 
 import com.datatorrent.contrib.jdbc.JDBCOperatorBase;
 import com.datatorrent.contrib.twitter.TwitterSampleInput;
+import com.datatorrent.lib.db.jdbc.JdbcStore;
 import com.datatorrent.api.Context.OperatorContext;
 import com.datatorrent.api.DAG;
 import com.datatorrent.api.DAG.Locality;
@@ -76,7 +77,7 @@ public class TwitterDumpApplication implements StreamingApplication
     public static final String UPDATE_WINDOW_ID_STATEMENT = "update dt_window_id_tracker set dt_window_id = ? where dt_application_id = ? and dt_operator_id = ?";
     private transient CallableStatement insertTuple;
     private transient PreparedStatement lastWindowUpdateStmt;
-
+    
     @Override
     protected PreparedStatement getBatchUpdateCommandFor(List<Status> tuples, long windowId) throws SQLException
     {

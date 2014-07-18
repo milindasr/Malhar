@@ -116,18 +116,6 @@ public class Application implements StreamingApplication
   private void configure(DAG dag, Configuration conf)
   {
     //dag.setAttribute(DAG.CONTAINERS_MAX_COUNT, 1);
-    if (StreamingApplication.Environment.CLUSTER == conf.getEnum(StreamingApplication.ENVIRONMENT, StreamingApplication.Environment.LOCAL)) {
-      // settings only affect distributed mode
-      AttributeMap attributes = dag.getAttributes();
-      if (attributes.get(DAGContext.CONTAINER_MEMORY_MB) == null) {
-        attributes.put(DAGContext.CONTAINER_MEMORY_MB, 2048);
-      }
-      if (attributes.get(DAGContext.MASTER_MEMORY_MB) == null) {
-        attributes.put(DAGContext.MASTER_MEMORY_MB, 1024);
-      }
-    }
-    else if (StreamingApplication.Environment.LOCAL == conf.getEnum(StreamingApplication.ENVIRONMENT, StreamingApplication.Environment.CLUSTER)) {
-    }
 
     String phoneRange = conf.get(P_phoneRange, null);
     if (phoneRange != null) {
@@ -144,10 +132,6 @@ public class Application implements StreamingApplication
   public void populateDAG(DAG dag, Configuration conf)
   {
     configure(dag, conf);
-
-    dag.setAttribute(DAG.APPLICATION_NAME, "MobileApplication");
-    dag.setAttribute(DAG.DEBUG, true);
-
     RandomEventGenerator phones = dag.addOperator("phonegen", RandomEventGenerator.class);
     phones.setMinvalue(this.phoneRange.lowerEndpoint());
     phones.setMaxvalue(this.phoneRange.upperEndpoint());
@@ -158,11 +142,11 @@ public class Application implements StreamingApplication
 
     // generate seed numbers
     Random random = new Random();
-    int maxPhone = phoneRange.upperEndpoint() - 5550000;
+    int maxPhone = phoneRange.upperEndpoint() - phoneRange.lowerEndpoint();
     int phonesToDisplay = conf.getInt(TOTAL_SEED_NOS,10);
 
     for (int i = phonesToDisplay; i-- > 0; ) {
-      int phoneNo = 5550000 + random.nextInt(maxPhone + 1);
+      int phoneNo = phoneRange.lowerEndpoint() + random.nextInt(maxPhone + 1);
       LOG.info("seed no: " + phoneNo);
       movementGen.phone_register.add(phoneNo);
     }
@@ -177,23 +161,14 @@ public class Application implements StreamingApplication
 
       PubSubWebSocketOutputOperator<Object> wsOut = dag.addOperator("phoneLocationQueryResultWS", new PubSubWebSocketOutputOperator<Object>());
       wsOut.setUri(uri);
-      wsOut.setTopic("demos.mobile.phoneLocationQueryResult");
 
       PubSubWebSocketInputOperator wsIn = dag.addOperator("phoneLocationQueryWS", new PubSubWebSocketInputOperator());
       wsIn.setUri(uri);
-      wsIn.addTopic("demos.mobile.phoneLocationQuery");
 
       dag.addStream("consoledata", movementGen.locationQueryResult, wsOut.input);
       dag.addStream("query", wsIn.outputPort, movementGen.phoneQuery);
     }
-    else {
-      // for testing purposes without server
-      movementGen.phone_register.add(5554995);
-      movementGen.phone_register.add(5556101);
-      ConsoleOutputOperator out = dag.addOperator("phoneLocationQueryResult", new ConsoleOutputOperator());
-      out.setStringFormat("phoneLocationQueryResult" + ": %s");
-      dag.addStream("consoledata", movementGen.locationQueryResult, out.input).setLocality(Locality.CONTAINER_LOCAL);
-    }
+   
   }
 
 }

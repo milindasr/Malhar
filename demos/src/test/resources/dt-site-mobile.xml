@@ -45,4 +45,24 @@
 	</name>
 	<value>32768</value>
 </property>
+ <property>
+    <name>dt.application.mobile.stream.consoledata.locality</name>
+    <value>CONTAINER_LOCAL</value>
+ </property>
+ <property>
+	<name>dt.application.mobile.operator.phoneLocationQueryResultWS.topic</name>
+	<value>demos.mobile.phoneLocationQueryResult</value>
+</property>
+<property>
+	<name>dt.application.mobile.operator.phoneLocationQueryWS.topic</name>
+	<value>demos.mobile.phoneLocationQuery</value>
+</property>
+ <property>
+    <name>dt.application.mobile.attr.CONTAINER_MEMORY_MB</name>
+    <value>2048</value>
+  </property>
+  <property>
+    <name>dt.application.mobile.attr.MASTER_MEMORY_MB</name>
+    <value>1024</value>
+  </property>
 </configuration>

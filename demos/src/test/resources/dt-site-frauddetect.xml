@@ -93,12 +93,20 @@
 	<value>frauddetect</value>
 </property>
 <property>
+	<name>dt.application.frauddetect.operator.mongoTxStatsOutput.collection</name>
+	<value>txStats</value>
+</property>
+<property>
 	<name>dt.application.frauddetect.operator.mongoBinAlertsOutput.hostName</name>
 	<value>localhost</value>
 </property>
 <property>
 	<name>dt.application.frauddetect.operator.mongoBinAlertsOutput.dataBase</name>
 	<value>frauddetect</value>
+</property>
+<property>
+	<name>dt.application.frauddetect.operator.mongoBinAlertsOutput.collection</name>
+	<value>binAlerts</value>
 </property>
 <property>
 	<name>dt.application.frauddetect.operator.mongoCcAlertsOutput.hostName</name>
@@ -109,6 +117,10 @@
 	<value>frauddetect</value>
 </property>
 <property>
+	<name>dt.application.frauddetect.operator.mongoCcAlertsOutput.collection</name>
+	<value>ccAlerts</value>
+</property>
+<property>
 	<name>dt.application.frauddetect.operator.mongoAvgAlertsOutput.hostName</name>
 	<value>localhost</value>
 </property>
@@ -116,7 +128,10 @@
 	<name>dt.application.frauddetect.operator.mongoAvgAlertsOutput.dataBase</name>
 	<value>frauddetect</value>
 </property>
-
+<property>
+	<name>dt.application.frauddetect.operator.mongoAvgAlertsOutput.collection</name>
+	<value>avgAlerts</value>
+</property>
 <property>
 	<name>dt.application.frauddetect.operator.txStatsAggregator.attr.APPLICATION_WINDOW_COUNT
 	</name>
