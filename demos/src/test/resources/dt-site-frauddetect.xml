@@ -122,77 +122,11 @@
 	</name>
 	<value>1</value>
 </property>
-<property>
-	<name>dt.application.frauddetect.operator.movingSum.inputport.data.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.frauddetect.operator.movingSum.outputport.integerSum.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.frauddetect.operator.txFilter.outputport.binCountOutputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.frauddetect.operator.txFilter.outputport.txOutputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.frauddetect.operator.txFilter.outputport.ccAlertOutputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.frauddetect.operator.txFilter.outputport.summaryTxnOutputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.frauddetect.operator.bankInfoFraudDetector.inputport.txCountInputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.frauddetect.operator.rangePerMerchant.inputport.data.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.frauddetect.operator.smaPerMerchant.inputport.data.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.frauddetect.operator.txStatsAggregator.inputport.rangeInputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.frauddetect.operator.txStatsAggregator.inputport.smaInputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.frauddetect.operator.avgAlerter.inputport.smaInputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
-<property>
-	<name>dt.application.frauddetect.operator.avgAlerter.inputport.txInputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
 
 <property>
-	<name>dt.application.frauddetect.operator.amountFraudDetector.inputport.inputPort.attr.QUEUE_CAPACITY
-	</name>
-	<value>32768</value>
-</property>
+     <name>dt.application.frauddetect.port.*.attr.QUEUE_CAPACITY</name>
+     <value>32000</value>
+  </property>
  <property>
     <name>dt.application.frauddetect.attr.CONTAINER_MEMORY_MB</name>
     <value>2048</value>

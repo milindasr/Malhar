@@ -86,11 +86,11 @@
     <value>{}</value>
   </property>
   <property>
-    <name>dt.application.machinedata.operator.SmtpAvgOperator.host</name>
+    <name>dt.application.machinedata.operator.SmtpAvgOperator.smtpHost</name>
     <value>localhost</value>
   </property>
    <property>
-    <name>dt.application.machinedata.operator.SmtpAvgOperator.port</name>
+    <name>dt.application.machinedata.operator.SmtpAvgOperator.smtpPort</name>
     <value>25</value>
   </property>
      <property>
