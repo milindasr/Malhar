@@ -150,8 +150,9 @@ public class TwitterDumpApplication implements StreamingApplication
     //ConsoleOutputOperator dbWriter = dag.addOperator("DatabaseWriter", new ConsoleOutputOperator());
     JDBCOperatorBase jdbcStore = new JDBCOperatorBase();
     jdbcStore.setDbDriver("com.mysql.jdbc.Driver");
-    jdbcStore.setDbUrl("jdbc:mysql://node6.morado.com:3306/twitter");
-    jdbcStore.setUserName("twitter");
+    jdbcStore.setDbUrl("jdbc:mysql://localhost:3306/twitter");
+    jdbcStore.setUserName("root");
+    jdbcStore.setPassword("cloudera");
 
     Status2Database dbWriter = dag.addOperator("DatabaseWriter", new Status2Database());
     dbWriter.setJdbcStore(jdbcStore);

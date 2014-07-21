@@ -15,13 +15,12 @@
  */
 package com.datatorrent.demos.frauddetect;
 
+import java.io.Serializable;
 import java.net.URI;
 
 import org.apache.hadoop.conf.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.datatorrent.api.AttributeMap;
+import com.datatorrent.api.Context;
 import com.datatorrent.api.DAG;
 import com.datatorrent.api.DAGContext;
 import com.datatorrent.api.StreamingApplication;
@@ -33,7 +32,9 @@ import com.datatorrent.lib.io.PubSubWebSocketInputOperator;
 import com.datatorrent.lib.io.PubSubWebSocketOutputOperator;
 import com.datatorrent.lib.math.RangeKeyVal;
 import com.datatorrent.lib.multiwindow.SimpleMovingAverage;
+import com.datatorrent.lib.util.BaseKeyValueOperator;
 import com.datatorrent.lib.util.KeyValPair;
+
 
 /**
  * Fraud detection application
@@ -67,6 +68,18 @@ public class Application implements StreamingApplication
     oper.setBytesPerFile(1024 * 1024 * 1024);
     return oper;
   }
+
+
+  public ConsoleOutputOperator getConsoleOperator(String name, DAG dag, String prefix, String format)
+  {
+    ConsoleOutputOperator oper = dag.addOperator(name, ConsoleOutputOperator.class);
+    // oper.setStringFormat(prefix + ": " + format);
+    return oper;
+  }
+
+  public static class KeyPartitionCodec<K, V> extends BaseKeyValueOperator.DefaultPartitionCodec<K,V> implements Serializable {}
+
+
   /**
    * Create the DAG
    */
@@ -113,6 +126,12 @@ public class Application implements StreamingApplication
       dag.addStream("bankInfoData", txBucketOperator.binCountOutputPort, smsOperator.data);
       dag.addStream("bankInfoCount", smsOperator.integerSum, binSampler.txCountInputPort);
       dag.addStream("filteredTransactions", txBucketOperator.txOutputPort, rangeOperator.data, smaOperator.data, avgAlertingOperator.txInputPort);
+
+      KeyPartitionCodec<MerchantKey, Long> txCodec = new KeyPartitionCodec<MerchantKey, Long>();
+      dag.setInputPortAttribute(rangeOperator.data, Context.PortContext.STREAM_CODEC, txCodec);
+      dag.setInputPortAttribute(smaOperator.data, Context.PortContext.STREAM_CODEC, txCodec);
+      dag.setInputPortAttribute(avgAlertingOperator.txInputPort, Context.PortContext.STREAM_CODEC, txCodec);
+
       dag.addStream("creditCardData", txBucketOperator.ccAlertOutputPort, ccSamplerOperator.inputPort);
       dag.addStream("txnSummaryData", txBucketOperator.summaryTxnOutputPort, txSummaryWsOutput.input);
       dag.addStream("smaAlerts", smaOperator.doubleSMA, avgAlertingOperator.smaInputPort);
