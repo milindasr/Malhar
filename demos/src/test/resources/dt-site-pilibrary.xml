@@ -24,8 +24,5 @@
 	<name>dt.application.PiLibraryDemo.operator.AnalyzeLocation.constant</name>
 	<value>900000000</value>
 </property>
-<property>
-	<name>dt.application.PiLibraryDemo.operator.InstantPI.multiplier</name>
-	<value>4</value>
-</property>
+
 </configuration>
