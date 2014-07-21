@@ -1,6 +1,6 @@
 <configuration>
  <property>
-	<name>dt.application.machinedata.class</name>
+	<name>dt.application.MachineDataDemo.class</name>
 	<value>com.datatorrent.demos.machinedata.Application</value>
 	<description>An alias for the application</description>
 </property>
@@ -9,100 +9,100 @@
 	<value>1000</value>
 </property>
 <property>
-	<name>dt.application.machinedata.operator.InputReceiver.attr.APPLICATION_WINDOW_COUNT
+	<name>dt.application.MachineDataDemo.operator.InputReceiver.attr.APPLICATION_WINDOW_COUNT
 	</name>
 	<value>5</value>
 </property>
 <property>
-	<name>dt.application.machinedata.operator.InputReceiver.attr.INITIAL_PARTITION_COUNT
+	<name>dt.application.MachineDataDemo.operator.InputReceiver.attr.INITIAL_PARTITION_COUNT
 	</name>
 	<value>1</value> 
 </property>
 <property>
-	<name>dt.application.machinedata.operator.GenerateDimensions.attr.APPLICATION_WINDOW_COUNT
+	<name>dt.application.MachineDataDemo.operator.GenerateDimensions.attr.APPLICATION_WINDOW_COUNT
 	</name>
 	<value>5</value>
 </property>
   <property>
-    <name>dt.application.machinedata.stream.generate_dimensions.locality</name>
+    <name>dt.application.MachineDataDemo.stream.generate_dimensions.locality</name>
     <value>CONTAINER_LOCAL</value>
  </property>
  <property>
-	<name>dt.application.machinedata.operator.GenerateDimensions.inputport.inputPort.attr.PARTITION_PARALLEL
+	<name>dt.application.MachineDataDemo.operator.GenerateDimensions.inputport.inputPort.attr.PARTITION_PARALLEL
 	</name>
 	<value>true</value>
 </property>
 <property>
-	<name>dt.application.machinedata.operator.PrereqAverage.inputport.inputPort.attr.PARTITION_PARALLEL
+	<name>dt.application.MachineDataDemo.operator.PrereqAverage.inputport.inputPort.attr.PARTITION_PARALLEL
 	</name>
 	<value>true</value>
 </property>
 <property>
-	<name>dt.application.machinedata.operator.PrereqAverage.attr.APPLICATION_WINDOW_COUNT
+	<name>dt.application.MachineDataDemo.operator.PrereqAverage.attr.APPLICATION_WINDOW_COUNT
 	</name>
 	<value>5</value>
 </property>
 <property>
-	<name>dt.application.machinedata.operator.Average.attr.APPLICATION_WINDOW_COUNT
+	<name>dt.application.MachineDataDemo.operator.Average.attr.APPLICATION_WINDOW_COUNT
 	</name>
 	<value>5</value>
 </property>
 <property>
-	<name>dt.application.machinedata.operator.RedisAverageOutput.inputport.input.attr.PARTITION_PARALLEL
+	<name>dt.application.MachineDataDemo.operator.RedisAverageOutput.inputport.input.attr.PARTITION_PARALLEL
 	</name>
 	<value>true</value>
 </property>
 <property>
-	<name>dt.application.machinedata.operator.RedisAverageOutput.attr.APPLICATION_WINDOW_COUNT
+	<name>dt.application.MachineDataDemo.operator.RedisAverageOutput.attr.APPLICATION_WINDOW_COUNT
 	</name>
 	<value>5</value>
 </property>
 <property>
-    <name>dt.application.machinedata.operator.RedisAverageOutput.store.dbIndex</name>
+    <name>dt.application.MachineDataDemo.operator.RedisAverageOutput.store.dbIndex</name>
     <value>2</value>
   </property>
   <property>
-    <name>dt.application.machinedata.operator.RedisAverageOutput.store.host</name>
+    <name>dt.application.MachineDataDemo.operator.RedisAverageOutput.store.host</name>
     <value>node9.morado.com</value>
   </property>
   <property>
-    <name>dt.application.machinedata.operator.RedisAverageOutput.store.port</name>
+    <name>dt.application.MachineDataDemo.operator.RedisAverageOutput.store.port</name>
     <value>6379</value>
   </property>
   <property>
-     <name>dt.application.machinedata.port.*.attr.QUEUE_CAPACITY</name>
+     <name>dt.application.MachineDataDemo.port.*.attr.QUEUE_CAPACITY</name>
      <value>32000</value>
   </property>
   <property>
-    <name>dt.application.machinedata.operator.SmtpAvgOperator.from</name>
+    <name>dt.application.MachineDataDemo.operator.SmtpAvgOperator.from</name>
     <value>admin@datatorrent.com</value>
   </property>
    <property>
-    <name>dt.application.machinedata.operator.SmtpAvgOperator.subject</name>
+    <name>dt.application.MachineDataDemo.operator.SmtpAvgOperator.subject</name>
     <value>Alert!!!</value>
   </property>
   <property>
-    <name>dt.application.machinedata.operator.SmtpAvgOperator.content</name>
+    <name>dt.application.MachineDataDemo.operator.SmtpAvgOperator.content</name>
     <value>{}</value>
   </property>
   <property>
-    <name>dt.application.machinedata.operator.SmtpAvgOperator.smtpHost</name>
+    <name>dt.application.MachineDataDemo.operator.SmtpAvgOperator.smtpHost</name>
     <value>localhost</value>
   </property>
    <property>
-    <name>dt.application.machinedata.operator.SmtpAvgOperator.smtpPort</name>
+    <name>dt.application.MachineDataDemo.operator.SmtpAvgOperator.smtpPort</name>
     <value>25</value>
   </property>
      <property>
-    <name>dt.application.machinedata.operator.SmtpAvgOperator.useSsl</name>
+    <name>dt.application.MachineDataDemo.operator.SmtpAvgOperator.useSsl</name>
     <value>false</value>
   </property>
   <property>
-	<name>dt.application.machinedata.operator.PrereqAverage.outputport.outputPort.attr.UNIFIER_LIMIT</name>
+	<name>dt.application.MachineDataDemo.operator.PrereqAverage.outputport.outputPort.attr.UNIFIER_LIMIT</name>
 	<value>8</value>
 </property>
  <property>
-    <name>dt.application.machinedata.stream.prereq_calculation.locality</name>
+    <name>dt.application.MachineDataDemo.stream.prereq_calculation.locality</name>
     <value>THREAD_LOCAL</value>
  </property>
 </configuration>

@@ -1,6 +1,6 @@
 <configuration>
  <property>
-	<name>dt.application.YahooFinanceApplication.class</name>
+	<name>dt.application.YahooFinanceDemoWithChart.class</name>
 	<value>com.datatorrent.demos.chart.YahooFinanceApplication</value>
 	<description>An alias for the application</description>
 </property>
@@ -9,28 +9,28 @@
 	<value>1000</value>
 </property>
 <property>
-	<name>dt.application.YahooFinanceApplication.operator.AverageChart.xAxisLabel</name>
+	<name>dt.application.YahooFinanceDemoWithChart.operator.AverageChart.xAxisLabel</name>
 	<value>TIME</value>
 </property>
 <property>
-	<name>dt.application.YahooFinanceApplication.operator.AverageChart.yAxisLabel</name>
+	<name>dt.application.YahooFinanceDemoWithChart.operator.AverageChart.yAxisLabel</name>
 	<value>PRICE</value>
 </property>
 <property>
-	<name>dt.application.YahooFinanceApplication.operator.CandleStickChart.xAxisLabel</name>
+	<name>dt.application.YahooFinanceDemoWithChart.operator.CandleStickChart.xAxisLabel</name>
 	<value>TIME</value>
 </property>
 <property>
-	<name>dt.application.YahooFinanceApplication.operator.CandleStickChart.yAxisLabel</name>
+	<name>dt.application.YahooFinanceDemoWithChart.operator.CandleStickChart.yAxisLabel</name>
 	<value>PRICE</value>
 </property>
 <property>
-	<name>dt.application.YahooFinanceApplication.operator.AverageChart.attr.APPLICATION_WINDOW_COUNT
+	<name>dt.application.YahooFinanceDemoWithChart.operator.AverageChart.attr.APPLICATION_WINDOW_COUNT
 	</name>
 	<value>5</value>
 </property>
 <property>
-	<name>dt.application.YahooFinanceApplication.operator.AverageChart.attr.APPLICATION_WINDOW_COUNT
+	<name>dt.application.YahooFinanceDemoWithChart.operator.AverageChart.attr.APPLICATION_WINDOW_COUNT
 	</name>
 	<value>5</value>
 </property>
