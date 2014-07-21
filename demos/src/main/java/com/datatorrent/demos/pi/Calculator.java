@@ -74,6 +74,7 @@ public class Calculator implements StreamingApplication
     Counter inSquare = dag.addOperator("CountInSquare", Counter.class);
     Division division = dag.addOperator("Ratio", Division.class);
     MultiplyByConstant multiplication = dag.addOperator("InstantPI", MultiplyByConstant.class);
+    multiplication.setMultiplier(4);
     RunningAverage average = dag.addOperator("AveragePI", new RunningAverage());
 
     dag.addStream("x", xyGenerator.integer_data, squareOperator.input);
