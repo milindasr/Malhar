@@ -70,6 +70,7 @@ public class Calculator implements StreamingApplication
     AbstractAggregator<Integer> pairOperator = dag.addOperator("PairXY", new ArrayListAggregator<Integer>());
     Sigma<Integer> sumOperator = dag.addOperator("SumXY", new Sigma<Integer>());
     LogicalCompareToConstant<Integer> comparator = dag.addOperator("AnalyzeLocation", new LogicalCompareToConstant<Integer>());
+    comparator.setConstant(30000 *30000);
     Counter inCircle = dag.addOperator("CountInCircle", Counter.class);
     Counter inSquare = dag.addOperator("CountInSquare", Counter.class);
     Division division = dag.addOperator("Ratio", Division.class);
