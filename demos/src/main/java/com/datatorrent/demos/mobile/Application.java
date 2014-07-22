@@ -15,27 +15,26 @@
  */
 package com.datatorrent.demos.mobile;
 
-import com.datatorrent.api.*;
-import com.datatorrent.api.Context.OperatorContext;
-import com.datatorrent.api.Context.PortContext;
-import com.datatorrent.api.DAG.Locality;
-import com.datatorrent.api.annotation.ApplicationAnnotation;
-
-import com.datatorrent.lib.io.ConsoleOutputOperator;
-import com.datatorrent.lib.io.PubSubWebSocketInputOperator;
-import com.datatorrent.lib.io.PubSubWebSocketOutputOperator;
-import com.datatorrent.lib.testbench.RandomEventGenerator;
-import com.google.common.collect.Range;
-import com.google.common.collect.Ranges;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Random;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Random;
+import com.datatorrent.api.Context.OperatorContext;
+import com.datatorrent.api.Context.PortContext;
+import com.datatorrent.api.DAG;
+import com.datatorrent.api.StatsListener;
+import com.datatorrent.api.StreamingApplication;
+import com.datatorrent.api.annotation.ApplicationAnnotation;
+import com.datatorrent.lib.io.PubSubWebSocketInputOperator;
+import com.datatorrent.lib.io.PubSubWebSocketOutputOperator;
+import com.datatorrent.lib.testbench.RandomEventGenerator;
+import com.google.common.collect.Range;
+import com.google.common.collect.Ranges;
 
 /**
  * Mobile Demo Application:
@@ -115,18 +114,6 @@ public class Application implements StreamingApplication
   private void configure(DAG dag, Configuration conf)
   {
     //dag.setAttribute(DAG.CONTAINERS_MAX_COUNT, 1);
-    if (StreamingApplication.Environment.CLUSTER == conf.getEnum(StreamingApplication.ENVIRONMENT, StreamingApplication.Environment.LOCAL)) {
-      // settings only affect distributed mode
-      AttributeMap attributes = dag.getAttributes();
-      if (attributes.get(DAGContext.CONTAINER_MEMORY_MB) == null) {
-        attributes.put(DAGContext.CONTAINER_MEMORY_MB, 2048);
-      }
-      if (attributes.get(DAGContext.MASTER_MEMORY_MB) == null) {
-        attributes.put(DAGContext.MASTER_MEMORY_MB, 1024);
-      }
-    }
-    else if (StreamingApplication.Environment.LOCAL == conf.getEnum(StreamingApplication.ENVIRONMENT, StreamingApplication.Environment.CLUSTER)) {
-    }
 
     String phoneRange = conf.get(P_phoneRange, null);
     if (phoneRange != null) {
@@ -143,41 +130,26 @@ public class Application implements StreamingApplication
   public void populateDAG(DAG dag, Configuration conf)
   {
     configure(dag, conf);
-
-    dag.setAttribute(DAG.APPLICATION_NAME, "MobileApplication");
-    dag.setAttribute(DAG.DEBUG, true);
-
     RandomEventGenerator phones = dag.addOperator("phonegen", RandomEventGenerator.class);
     phones.setMinvalue(this.phoneRange.lowerEndpoint());
     phones.setMaxvalue(this.phoneRange.upperEndpoint());
-    phones.setTuplesBlast(200);
-    phones.setTuplesBlastIntervalMillis(5);
-    dag.setOutputPortAttribute(phones.integer_data, PortContext.QUEUE_CAPACITY, 32 * 1024);
-
     PhoneMovementGenerator movementGen = dag.addOperator("pmove", PhoneMovementGenerator.class);
-    movementGen.setRange(20);
-    movementGen.setThreshold(80);
-    dag.setAttribute(movementGen, OperatorContext.INITIAL_PARTITION_COUNT, 2);
-    //dag.setAttribute(movementGen, OperatorContext.PARTITION_TPS_MIN, 10000);
-    //dag.setAttribute(movementGen, OperatorContext.PARTITION_TPS_MAX, 30000);
+
     ThroughputBasedPartitioner<PhoneMovementGenerator> partitioner = new ThroughputBasedPartitioner<PhoneMovementGenerator>();
     partitioner.setCooldownMillis(90000);
     partitioner.setMaximumThroughput(30000);
     partitioner.setMinimumThroughput(10000);
     dag.setAttribute(movementGen,OperatorContext.STATS_LISTENERS, Arrays.asList(new StatsListener[]{partitioner}));
     dag.setAttribute(movementGen,OperatorContext.PARTITIONER, partitioner);
-    dag.setInputPortAttribute(movementGen.data, PortContext.QUEUE_CAPACITY, 32 * 1024);
-
-    // default partitioning: first connected stream to movementGen will be partitioned
     dag.addStream("phonedata", phones.integer_data, movementGen.data);
 
     // generate seed numbers
     Random random = new Random();
-    int maxPhone = phoneRange.upperEndpoint() - 5550000;
+    int maxPhone = phoneRange.upperEndpoint() - phoneRange.lowerEndpoint();
     int phonesToDisplay = conf.getInt(TOTAL_SEED_NOS,10);
 
     for (int i = phonesToDisplay; i-- > 0; ) {
-      int phoneNo = 5550000 + random.nextInt(maxPhone + 1);
+      int phoneNo = phoneRange.lowerEndpoint() + random.nextInt(maxPhone + 1);
       LOG.info("seed no: " + phoneNo);
       movementGen.phone_register.add(phoneNo);
     }
@@ -192,23 +164,14 @@ public class Application implements StreamingApplication
 
       PubSubWebSocketOutputOperator<Object> wsOut = dag.addOperator("phoneLocationQueryResultWS", new PubSubWebSocketOutputOperator<Object>());
       wsOut.setUri(uri);
-      wsOut.setTopic("demos.mobile.phoneLocationQueryResult");
 
       PubSubWebSocketInputOperator wsIn = dag.addOperator("phoneLocationQueryWS", new PubSubWebSocketInputOperator());
       wsIn.setUri(uri);
-      wsIn.addTopic("demos.mobile.phoneLocationQuery");
 
       dag.addStream("consoledata", movementGen.locationQueryResult, wsOut.input);
       dag.addStream("query", wsIn.outputPort, movementGen.phoneQuery);
     }
-    else {
-      // for testing purposes without server
-      movementGen.phone_register.add(5554995);
-      movementGen.phone_register.add(5556101);
-      ConsoleOutputOperator out = dag.addOperator("phoneLocationQueryResult", new ConsoleOutputOperator());
-      out.setStringFormat("phoneLocationQueryResult" + ": %s");
-      dag.addStream("consoledata", movementGen.locationQueryResult, out.input);
-    }
+
   }
 
 }

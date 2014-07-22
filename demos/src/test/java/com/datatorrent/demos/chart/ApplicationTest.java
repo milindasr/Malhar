@@ -15,10 +15,12 @@
  */
 package com.datatorrent.demos.chart;
 
+import org.apache.hadoop.conf.Configuration;
 import org.junit.Test;
 
 import com.datatorrent.api.LocalMode;
 import com.datatorrent.demos.chart.YahooFinanceApplication;
+import com.datatorrent.demos.wordcount.Application;
 
 /**
  * Run Yahoo Finance application demo.
@@ -34,7 +36,12 @@ public class ApplicationTest
   @Test
   public void testApplication() throws Exception
   {
-    LocalMode.runApp(new YahooFinanceApplication(), 60000);
+	  LocalMode lma = LocalMode.newInstance();
+	    Configuration conf =new Configuration(false);
+	    conf.addResource("dt-site-chart.xml");
+	    lma.prepareDAG(new YahooFinanceApplication(), conf);
+	    LocalMode.Controller lc = lma.getController();
+	    lc.run(60000);
   }
 
 }

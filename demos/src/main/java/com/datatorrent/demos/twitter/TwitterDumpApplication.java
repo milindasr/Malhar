@@ -27,6 +27,7 @@ import twitter4j.Status;
 
 import com.datatorrent.contrib.jdbc.JDBCOperatorBase;
 import com.datatorrent.contrib.twitter.TwitterSampleInput;
+import com.datatorrent.lib.db.jdbc.JdbcStore;
 import com.datatorrent.api.Context.OperatorContext;
 import com.datatorrent.api.DAG;
 import com.datatorrent.api.DAG.Locality;
@@ -76,7 +77,7 @@ public class TwitterDumpApplication implements StreamingApplication
     public static final String UPDATE_WINDOW_ID_STATEMENT = "update dt_window_id_tracker set dt_window_id = ? where dt_application_id = ? and dt_operator_id = ?";
     private transient CallableStatement insertTuple;
     private transient PreparedStatement lastWindowUpdateStmt;
-
+    
     @Override
     protected PreparedStatement getBatchUpdateCommandFor(List<Status> tuples, long windowId) throws SQLException
     {
@@ -149,8 +150,9 @@ public class TwitterDumpApplication implements StreamingApplication
     //ConsoleOutputOperator dbWriter = dag.addOperator("DatabaseWriter", new ConsoleOutputOperator());
     JDBCOperatorBase jdbcStore = new JDBCOperatorBase();
     jdbcStore.setDbDriver("com.mysql.jdbc.Driver");
-    jdbcStore.setDbUrl("jdbc:mysql://node6.morado.com:3306/twitter");
-    jdbcStore.setUserName("twitter");
+    jdbcStore.setDbUrl("jdbc:mysql://localhost:3306/twitter");
+    jdbcStore.setUserName("root");
+    jdbcStore.setPassword("cloudera");
 
     Status2Database dbWriter = dag.addOperator("DatabaseWriter", new Status2Database());
     dbWriter.setJdbcStore(jdbcStore);
