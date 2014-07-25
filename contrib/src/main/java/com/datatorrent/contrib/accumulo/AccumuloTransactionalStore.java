@@ -25,7 +25,6 @@ import org.apache.accumulo.core.data.Mutation;
 import org.apache.accumulo.core.data.Range;
 import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.security.Authorizations;
-import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +34,12 @@ import com.datatorrent.lib.db.TransactionableStore;
 
 /**
  * Provides transactional support.Not intended for true transactional
- * properties. It deos not guarantee exactly once property.It only skips tuple
+ * properties. It does not guarantee exactly once property.It only skips tuple
  * processed in previous windows
  */
 public class AccumuloTransactionalStore extends AccumuloStore implements
-		TransactionableStore {
+TransactionableStore {
+	public static final int SIZEOF_LONG = Long.SIZE / Byte.SIZE;
 	private static final transient Logger logger = LoggerFactory
 			.getLogger(AccumuloTransactionalStore.class);
 	private static final String DEFAULT_ROW_NAME = "HBaseOperator_row";
@@ -66,8 +66,8 @@ public class AccumuloTransactionalStore extends AccumuloStore implements
 	 * arrays. uses util class in hbase library to do so.
 	 */
 	private void constructKeys() {
-		rowBytes = Bytes.toBytes(rowName);
-		columnFamilyBytes = Bytes.toBytes(columnFamilyName);
+		rowBytes = rowName.getBytes();
+		columnFamilyBytes = columnFamilyName.getBytes();
 	}
 
 	public String getRowName() {
@@ -118,7 +118,7 @@ public class AccumuloTransactionalStore extends AccumuloStore implements
 		Scanner scan = null;
 		String columnKey = appId + "_" + operatorId + "_"
 				+ lastWindowColumnName;
-		lastWindowColumnBytes = Bytes.toBytes(columnKey);
+		lastWindowColumnBytes = columnKey.getBytes();
 		try {
 			scan = connector.createScanner(tableName, auths);
 		} catch (TableNotFoundException e) {
@@ -133,7 +133,7 @@ public class AccumuloTransactionalStore extends AccumuloStore implements
 			value = entry.getValue().get();
 		}
 		if (value != null) {
-			long longval = Bytes.toLong(value);
+			long longval = toLong(value,0,SIZEOF_LONG);
 			return longval;
 		}
 		return -1;
@@ -143,10 +143,10 @@ public class AccumuloTransactionalStore extends AccumuloStore implements
 	@Override
 	public void storeCommittedWindowId(String appId, int operatorId,
 			long windowId) {
-		byte[] WindowIdBytes = Bytes.toBytes(windowId);
+		byte[] WindowIdBytes = toBytes(windowId);
 		String columnKey = appId + "_" + operatorId + "_"
 				+ lastWindowColumnName;
-		lastWindowColumnBytes = Bytes.toBytes(columnKey);
+		lastWindowColumnBytes = columnKey.getBytes();
 		Mutation mutation = new Mutation(rowBytes);
 		mutation.put(columnFamilyBytes, lastWindowColumnBytes, WindowIdBytes);
 		try {
@@ -163,6 +163,23 @@ public class AccumuloTransactionalStore extends AccumuloStore implements
 	public void removeCommittedWindowId(String appId, int operatorId) {
 		// accumulo does not support transactions
 
+	}
+	public static byte[] toBytes(long val) {
+		byte [] b = new byte[8];
+		for (int i = 7; i > 0; i--) {
+			b[i] = (byte) val;
+			val >>>= 8;
+		}
+		b[0] = (byte) val;
+		return b;
+	}
+	public static long toLong(byte[] bytes, int offset, final int length) {
+		long l = 0;
+		for(int i = offset; i < offset + length; i++) {
+			l <<= 8;
+			l ^= bytes[i] & 0xFF;
+		}
+		return l;
 	}
 
 }

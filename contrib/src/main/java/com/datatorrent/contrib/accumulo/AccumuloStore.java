@@ -47,7 +47,14 @@ public class AccumuloStore implements Connectable {
 	protected String tableName;
 	protected transient Connector connector;
 	protected transient BatchWriter batchwriter;
-
+    private long memoryLimit;
+    private int numThreads;
+	private static final long DEFAULT_MEMORY=2147483648l;
+    private static final int DEFAULT_THREADS=1;
+	public AccumuloStore(){
+		memoryLimit=DEFAULT_MEMORY;
+		numThreads=DEFAULT_THREADS;
+	}
 	public BatchWriter getBatchwriter() {
 		return batchwriter;
 	}
@@ -132,6 +139,14 @@ public class AccumuloStore implements Connectable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
+	public void setMemoryLimit(long memoryLimit) {
+		this.memoryLimit = memoryLimit;
+	}
+	
+	public void setNumThreads(int numThreads) {
+		this.numThreads = numThreads;
+	}
 
 	@Override
 	public void connect() throws IOException {
@@ -148,8 +163,8 @@ public class AccumuloStore implements Connectable {
 			DTThrowable.rethrow(e);
 		}
 		BatchWriterConfig config = new BatchWriterConfig();
-		config.setMaxMemory(2147483648l);
-		config.getMaxWriteThreads();
+		config.setMaxMemory(memoryLimit);
+		config.setMaxWriteThreads(numThreads);
 		try {
 			batchwriter = connector.createBatchWriter(
 					tableName, config);

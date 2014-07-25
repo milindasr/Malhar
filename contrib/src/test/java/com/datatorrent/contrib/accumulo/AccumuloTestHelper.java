@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2014 DataTorrent, Inc. ALL Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.datatorrent.contrib.accumulo;
 
 import java.io.IOException;
@@ -20,22 +35,17 @@ import org.apache.accumulo.core.data.Mutation;
 import org.apache.accumulo.core.data.Range;
 import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.security.Authorizations;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datatorrent.common.util.DTThrowable;
-import com.datatorrent.contrib.hbase.HBaseTuple;
 
 
 public class AccumuloTestHelper {
 	static Connector con;
-	public static final byte[] colfam0_bytes = Bytes.toBytes("colfam0");
-	public static final byte[] col0_bytes = Bytes.toBytes("col-0");
+	public static final byte[] colfam0_bytes = "colfam0".getBytes();
+	public static final byte[] col0_bytes = "col-0".getBytes();
 	private static final Logger logger = LoggerFactory.getLogger(AccumuloTestHelper.class);
 	public static void createTable() {
 		TableOperations tableoper = con.tableOperations();
@@ -85,11 +95,14 @@ public class AccumuloTestHelper {
 		}
 		try {
 			for (int i = 0; i < 500; ++i) {
-				Mutation mutation = new Mutation(Bytes.toBytes("row" + i));
+				String rowstr="row" + i;
+				Mutation mutation = new Mutation(rowstr.getBytes());
 				for (int j = 0; j < 500; ++j) {
-					mutation.put(colfam0_bytes, Bytes.toBytes("col" + "-" + j),
+					String colstr="col" + "-" + j;
+					String valstr="val" + "-" + i + "-" + j;
+					mutation.put(colfam0_bytes,colstr.getBytes(),
 							System.currentTimeMillis(),
-							Bytes.toBytes("val" + "-" + i + "-" + j));
+							valstr.getBytes());
 				}
 				batchwriter.addMutation(mutation);
 			}
