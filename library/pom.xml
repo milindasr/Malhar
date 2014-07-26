@@ -18,15 +18,6 @@
     <maven.deploy.skip>false</maven.deploy.skip>
   </properties>
 
-  <!-- repository to provide the DataTorrent artifacts -->
-  <!--repositories>
-    <repository>
-      <id>datatorrent</id>
-      <name>DataTorrent Release Repository</name>
-      <url>https://www.datatorrent.com/maven/content/repositories/releases/</url>
-    </repository>
-  </repositories-->
-
   <build>
     <plugins>
       <!-- Publish tests jar -->
@@ -48,11 +39,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>5.1.21</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
       <version>10.9.1.0</version>
@@ -69,16 +55,6 @@
           <groupId>javax.mail</groupId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-websocket</artifactId>
-      <version>${jetty.version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
@@ -119,16 +95,6 @@
       <version>1.1-rev-1</version>
     </dependency>
     <dependency>
-      <groupId>org.python</groupId>
-      <artifactId>jython</artifactId>
-      <version>2.5.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.beanshell</groupId>
-      <artifactId>bsh</artifactId>
-      <version>2.0b5</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-client</artifactId>
       <version>5.8.0</version>
@@ -144,6 +110,19 @@
       <artifactId>activemq-kahadb-store</artifactId>
       <version>5.8.0</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.5</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- The following are needed but DT Engine already has them.
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-websocket</artifactId>
+      <version>${jetty.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
@@ -177,6 +156,7 @@
       <artifactId>async-http-client</artifactId>
       <version>1.7.20</version>
     </dependency>
+    -->
     <dependency>
       <groupId>net.sf.trove4j</groupId>
       <artifactId>trove4j</artifactId>
@@ -186,6 +166,12 @@
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <version>2.3.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-net</groupId>
+      <artifactId>commons-net</artifactId>
+      <version>3.2</version>
     </dependency>
   </dependencies>
 
